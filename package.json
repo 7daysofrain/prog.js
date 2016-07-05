@@ -1,0 +1,19 @@
+{
+  "name": "prog.js",
+  "version": "1.0.0",
+  "description": "A Javascript framework idea where progressive enhancement is the base. MVVM Based framework form content based websites where the model is the HTML.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/7daysofrain/prog.js.git"
+  },
+  "author": "Joseba Alonso <7daysofrain@gmail.com> (http://www.refr3sh.es)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/7daysofrain/prog.js/issues"
+  },
+  "homepage": "https://github.com/7daysofrain/prog.js#readme"
+}

@@ -2,7 +2,7 @@
   "name": "prog.js",
   "version": "1.0.0",
   "description": "A Javascript framework idea where progressive enhancement is the base. MVVM Based framework form content based websites where the model is the HTML.",
-  "main": "index.js",
+  "main": "ProgApp.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/7daysofrain/prog.js/issues"
   },
-  "homepage": "https://github.com/7daysofrain/prog.js#readme"
+  "homepage": "https://github.com/7daysofrain/prog.js#readme",
+  "dependencies": {
+    "es6-object-assign": "^1.0.2",
+    "jquery.waitforimages": "^2.2.0"
+  }
 }

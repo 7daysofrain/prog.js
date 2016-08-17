@@ -1,9 +1,9 @@
 define([
-	"progjs/Enviorment",
+	"progjs/Enviornment",
 	"progjs/core/StylesManager",
 	"signals",
 	"waitForImages",
-], function(Enviorment,stylesManager,signals)
+], function(Enviornment,stylesManager,signals)
 {
 
 	function httpget(url) {

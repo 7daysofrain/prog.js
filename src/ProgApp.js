@@ -3,9 +3,10 @@ define([
 	"progjs/core/ContentWirer",
 	"progjs/core/ContentLoader",
 	"progjs/Preloader",
+	"progjs/ViewModel",
 	"progjs/transitioners/regularFlow",
 	"signals",
-], function(router,contentWirer,contentLoader,Preloader,transitioner,signals)
+], function(router,contentWirer,contentLoader,Preloader,ViewModel,transitioner,signals)
 {
 	var container;
 	var currentUrl;
@@ -19,7 +20,7 @@ define([
 		return result;
 	}
 	var obj = {
-		loaded: new signals.Signal(),
+		sectionChanged: new signals.Signal(),
 		init: function () {
 			return new Promise(function (resolve, reject) {
 				return router.init().then(function(){
@@ -29,6 +30,7 @@ define([
 					contentLoader.init(contentWirer);
 					router.pathChanged.add(this._onPathChanged.bind(this));
 					console.log("Section Loader ready");
+					ViewModel.preloader = preloader;
 					resolve();
 				}.bind(this));
 			}.bind(this))
@@ -37,18 +39,39 @@ define([
 			container = $("[data-pg-target]");
 			currentUrl = router.currentPath;
 
+			preloader.show();
+
 			contentLoader.contentLoaded.add(function(data){
 				currentViewModel = data.viewModel;
 				container.empty().append(data.view);
+				router.hashChanged.add(currentViewModel.onHashChanged.bind(currentViewModel));
+				if($(data.loadedDocument).filter("title").text()){
+					$(document).find("head title").text($(data.loadedDocument).filter("title").text())
+				}
+				this.sectionChanged.dispatch(data);
 			}.bind(this))
 
-			contentLoader.local(document,currentUrl);
+			contentWirer.process($(document));
+
+			contentLoader.local(document,currentUrl)
+				.then(function(e){
+					currentViewModel = e.viewModel;
+					return currentViewModel.onAfterLoad();
+				})
+				.then(function(){
+					return preloader.hide();
+				})
+				.then(function(){
+					return currentViewModel.transitionIn();
+				});
+			;
 		},
 		addContentParser: function(w){
 			contentWirer.registerParser(w);
 		},
 		setPreloader: function(pre){
 			preloader = pre;
+			ViewModel.preloader = preloader;
 		},
 		load: function(url){
 			url = getPath(url);

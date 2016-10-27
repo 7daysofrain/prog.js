@@ -41,7 +41,7 @@ define([
 		handleLink: function(url,backNav){
 			if(this._currentPath != getPath(url)){
 				this._currentPath = getPath(url);
-				this.pathChanged.dispatch({path:url});
+				this.pathChanged.dispatch({path:url,isBack:backNav});
 			}
 			else{
 				location.hash = getHash(url);

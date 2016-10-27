@@ -15,11 +15,12 @@ define(["progjs/core/ContentLoader"], function(contentLoader)
 					return contentLoader.remote(nextUrl);
 				})
 				.then(function(e){
+					$(window).scrollTop(0);
 					newVM = e.viewModel;
-					return preloader.hide();
+					return newVM.onAfterLoad();
 				})
 				.then(function(){
-					return newVM.onAfterLoad();
+					return preloader.hide();
 				})
 				.then(function(){
 					return newVM.transitionIn();

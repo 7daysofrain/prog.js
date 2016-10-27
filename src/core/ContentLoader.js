@@ -1,9 +1,10 @@
 define([
 	"progjs/Enviornment",
+	"progjs/ViewModel",
 	"progjs/core/StylesManager",
 	"signals",
 	"waitForImages",
-], function(Enviornment,stylesManager,signals)
+], function(Enviornment,ViewModel,stylesManager,signals)
 {
 
 	function httpget(url) {
@@ -18,20 +19,22 @@ define([
 			});
 		});
 	}
-
+	var cache = {};
 	var currentViewModel,contentWirer,newContent;
 	var obj = {
+		useCache: true,
 		contentLoaded: new signals.Signal(),
 		init: function(_contentWirer){
 			contentWirer = _contentWirer;
 		},
-		remote: function(currentUrl){
+		remote: function(currentUrl,useCache){
 			return new Promise(function (resolve, reject) {
 				console.log("Start fetch");
 				httpget(currentUrl)
 				.then(function (content) {
 					console.log("URL Loaded");
 					newContent = content;
+					stylesManager.clearUnlocked();
 					return stylesManager.loadFromDocument(content)
 				})
 				.then(function() {
@@ -40,6 +43,9 @@ define([
 				})
 				.then(function () {
 					console.log("Images loaded");
+					if(obj.useCache || useCache){
+						cache[currentUrl] = newContent;
+					}
 					return obj.local(newContent,currentUrl);
 				})
 				.then(function(payload){
@@ -52,13 +58,14 @@ define([
 				var newContent = $(document).find("[data-pg-content]");
 				newContent.remove();
 				contentWirer.process(newContent);
-
-				if ($(document).filter('meta[name="pg:viewModel"]').length > 0) {
-					var vmname = "/" + $(document).filter('meta[name="pg:viewModel"]').attr("content");
+				var meta = $(document).filter('meta[name="pg:viewModel"]').length > 0 ? $(document).filter('meta[name="pg:viewModel"]') : $(document).find('meta[name="pg:viewModel"]')
+				if (meta.length > 0) {
+					var vmname = "/" + meta.attr("content");
 				}
 
-				if ($(document).filter('meta[name="pg:viewModel:mobile"]').length > 0 && Enviorment.isMobileSize) {
-					var vmname = "/" + $(document).filter('meta[name="pg:viewModel:mobile"]').attr("content");
+				var meta = $(document).filter('meta[name="pg:viewModel:mobile"]').length > 0 ? $(document).filter('meta[name="pg:viewModel:mobile"]') : $(document).find('meta[name="pg:viewModel"]')
+				if (meta.length > 0 && Enviornment.isMobileSize) {
+					var vmname = "/" + meta.attr("content");
 				}
 				var prefix = "/content/script/";
 				var path = "app/viewModel";
@@ -69,16 +76,28 @@ define([
 					[module],
 					function (viewModel) {
 						console.log("View model loaded");
-						currentViewModel = viewModel;
-						var payload = {view: newContent, viewModel: viewModel};
-						this.contentLoaded.dispatch(payload);
+						var payload = this.prepareViewModel(viewModel,newContent,document);
 						resolve(payload);
 					}.bind(this),
 					function () {
-						console.log("ViewModel load error", arguments);
+						console.log("ViewModel load error, creating one", arguments);
+						var viewModel = ViewModel.create({});
+						var payload = this.prepareViewModel(viewModel,newContent,document);
+						resolve(payload);
 					}.bind(this)
 				)
 			}.bind(this));
+		},
+		prepareViewModel: function(viewModel,newContent,document){
+			currentViewModel = viewModel;
+			viewModel.view = newContent;
+			newContent.addClass("pg-loaded");
+			var payload = {view: newContent, viewModel: viewModel,loadedDocument: document};
+			this.contentLoaded.dispatch(payload);
+			return payload;
+		},
+		isCached: function(url){
+			return cache[url] == null;
 		}
 	};
 	return obj;

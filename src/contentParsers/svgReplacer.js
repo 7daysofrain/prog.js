@@ -19,7 +19,11 @@ define([], function()
 					$(el).parent().replaceWith(xhr.responseText);
 				}
 				else{
+					var tit = $(el).attr("title");
 					$(el).replaceWith(xhr.responseText);
+					if(tit){
+						$(el).find("title").text(tit);
+					}
 				}
 				if (loadsLeft == 0) {
 					console.log("SVG <img> replacement done");

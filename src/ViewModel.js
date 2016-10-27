@@ -27,7 +27,9 @@ define(["object.assing"], function(oa)
 					return new Promise(function (resolve, reject) {
 						resolve();
 					});
-				}
+				},
+				onHashChanged: function(){},
+				preloader: this.preloader,
 			};
 			Object.assign(vm,def);
 			return vm;

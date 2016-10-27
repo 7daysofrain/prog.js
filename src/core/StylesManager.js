@@ -48,8 +48,8 @@ define([], function()
 				resolve();
 			});
 		},
-		clearTemp: function(){
-			$(tempCSSs).remove();
+		clearUnlocked: function(){
+			$("link[rel=stylesheet]:not([data-pg-locked])").remove();
 		},
 		// TODO soporte de multiples hojas de estilo en un documento
 		loadFromDocument: function(document){

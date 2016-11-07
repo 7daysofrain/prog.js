@@ -37,6 +37,9 @@ define([
 		},
 		start: function(){
 			container = $("[data-pg-target]");
+			if(container.length == 0){
+				container = $("main");
+			}
 			currentUrl = router.currentPath;
 
 			preloader.show();

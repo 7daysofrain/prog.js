@@ -14,7 +14,8 @@ define([
 	}
 	function waitForImages(content) {
 		return new Promise(function (resolve, reject) {
-			$(content).find("[data-pg-content]").waitForImages(true).done(function(){
+			var $target = $(content).find("[data-pg-content]").length > 0 ? $(content).find("[data-pg-content]") : $(content).find("main")
+			$target.waitForImages(true).done(function(){
 				resolve();
 			});
 		});
@@ -56,6 +57,9 @@ define([
 		local: function(document,currentUrl){
 			return new Promise(function (resolve, reject) {
 				var newContent = $(document).find("[data-pg-content]");
+				if(newContent.length == 0){
+					newContent = $(document).find("main");
+				}
 				newContent.remove();
 				contentWirer.process(newContent);
 				var meta = $(document).filter('meta[name="pg:viewModel"]').length > 0 ? $(document).filter('meta[name="pg:viewModel"]') : $(document).find('meta[name="pg:viewModel"]')

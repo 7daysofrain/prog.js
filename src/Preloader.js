@@ -1,6 +1,5 @@
 define(["object.assing"], function(oa)
 {
-	oa.polyfill();
 	var obj = {
 		create: function(def){
 			var vm = {

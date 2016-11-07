@@ -28,8 +28,6 @@ define([], function()
 				if (loadsLeft == 0) {
 					console.log("SVG <img> replacement done");
 				}
-			}).error(function (err) {
-				console.log(err);
 			});
 		}
 	}

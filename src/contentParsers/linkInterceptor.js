@@ -8,7 +8,7 @@ define(["progjs/core/Router"], function(router)
 			var a = $(event.target)[0];
 			var url = $(event.currentTarget).attr("href");
 			var parser = document.createElement("a");
-			if(url && url.indexOf("://") == -1 ){
+			if(url && url.indexOf(":") == -1 ){
 				console.log("Capturing link: " + url);
 				router.handleLink(url);
 				event.preventDefault();
